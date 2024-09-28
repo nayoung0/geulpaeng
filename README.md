@@ -17,16 +17,16 @@
 
 ### example
 * 태그된 사람이 이모지를 달지 않은 경우
-<video width="500" height="400" controls>
-  <source src="./assets/demo_no_reaction.mp4" type="video/mp4">
-</video>
+
+https://github.com/user-attachments/assets/f3fa3698-2968-4178-b538-8a0587cffd24
 
 
 
 * 태그된 사람이 모두 이모지를 단 경우
-<video width="500" height="400" controls>
-  <source src="./assets/demo_reaction.mp4" type="video/mp4">
-</video>
+
+
+https://github.com/user-attachments/assets/2e79da7f-1106-4d00-96e8-3576e2450bfe
+
 
 
 ## 궁금한 점이 있나요?
