@@ -18,14 +18,14 @@
 ### example
 * 태그된 사람이 이모지를 달지 않은 경우
 <video width="500" height="400" controls>
-  <source src="./assets/demo_no_reaction.mov" type="video/mp4">
+  <source src="./assets/demo_no_reaction.mp4" type="video/mp4">
 </video>
 
 
 
 * 태그된 사람이 모두 이모지를 단 경우
-<video width="600" height="400" controls>
-  <source src="./assets/demo_reaction.mov" type="video/mp4">
+<video width="500" height="400" controls>
+  <source src="./assets/demo_reaction.mp4" type="video/mp4">
 </video>
 
 
