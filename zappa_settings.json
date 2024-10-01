@@ -1,22 +1,20 @@
 {
     "dev": {
-        "app_function": "run.app",
+        "app_function": "app.main.app",
         "aws_region": "ap-northeast-2",
         "profile_name": "default",
-        "project_name": "manager",
-        "runtime": "python3.11",
-        "s3_bucket": "",
+        "project_name": "geulpaeng",
+        "runtime": "python3.12",
+        "s3_bucket": "zappa-geulpaeng",
         "keep_warm": false,
-        "timeout_seconds": 90
-    },
-    "prod": {
-        "app_function": "run.app",
-        "aws_region": "ap-northeast-2",
-        "profile_name": "default",
-        "project_name": "manager",
-        "runtime": "python3.11",
-        "s3_bucket": "",
-        "keep_warm": false,
-        "timeout_seconds": 90
+        "timeout_seconds": 90,
+        "exclude": [
+            ".venv",
+            ".idea",
+            ".vscode",
+            ".ignore",
+            "assets",
+            "*.zip"
+        ]
     }
 }
