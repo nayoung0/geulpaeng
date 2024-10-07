@@ -1,3 +1,26 @@
 env/**
 
-ignore/**
+ignore
+.ignore
+
+.idea
+.vscode
+
+### Terraform
+.terraform
+*.lock.hcl
+*.tfstate
+*.backup
+
+app.egg-info
+*.pyc
+.mypy_cache
+.coverage
+htmlcov
+.cache
+.venv
+__pycache__
+
+*.zip
+
+app/slack/**
