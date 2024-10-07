@@ -3,7 +3,7 @@ import json
 import logging
 
 from app.domain.model.event import SlackEvent, EventTriggerWord
-from app.adapter.output.message.slack import SlackClient
+from app.adapter.output.slack import SlackClient
 
 
 class EventService:
@@ -65,8 +65,8 @@ class EventService:
 
     def handle_event(self, slack_event: SlackEvent) -> dict:
 
-        for i in EventTriggerWord.remind_users_did_not_react:
-            if i in slack_event.event.get("text"):
+        for trigger_word in EventTriggerWord.remind_users_did_not_react:
+            if trigger_word in slack_event.event.get("text"):
                 parent_message = self.client.get_message_info(
                     channel_id=slack_event.event.get("channel"),
                     timestamp=slack_event.event.get("thread_ts"),

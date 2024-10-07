@@ -15,7 +15,10 @@
             ".vscode",
             ".ignore",
             "assets",
-            "*.zip"
+            "*.zip",
+            "*.mp4",
+            "*.jpg",
+            "*.png"
         ]
     }
 }

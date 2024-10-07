@@ -1,6 +1,6 @@
 from dependency_injector import containers, providers
 from app.application.service.event_service import EventService
-from app.adapter.output.message.slack import SlackClient
+from app.adapter.output.slack import SlackClient
 
 
 class Container(containers.DeclarativeContainer):
