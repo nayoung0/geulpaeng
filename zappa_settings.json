@@ -5,10 +5,10 @@
         "profile_name": "default",
         "project_name": "geulpaeng",
         "runtime": "python3.12",
-        "s3_bucket": "zappa-geulpaeng",
+        "s3_bucket": "your_bucket_name",
         "keep_warm": false,
         "timeout_seconds": 90,
-        "remote_env": "s3://zappa-geulpaeng/env.json",
+        "remote_env": "s3://your_bucket_name/env.json",
         "exclude": [
             ".venv",
             ".idea",
