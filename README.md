@@ -15,13 +15,16 @@
 
 ## How to start
 ### Download & Set up
+
 ```shell
 $ git clone git@github.com:nayoung0/geulpaeng.git && cd geulpaeng
 $ poetry install
 ```
+
 ### Upload env file
 `s3://{your_bucket_name}/env.json` 위치에 아래의 내용을 추가하세요.
 * `BOT_USERS`는 멘션에서 제외할 유저 목록입니다. 해당하는 값이 없는 경우엔 `"[]"`로 입력해주세요.
+
 ```json
 {
   "TOKEN": "your_slackbot_token",
@@ -29,9 +32,21 @@ $ poetry install
 }
 ```
 
-### Deploy
+### Update bucket name
+[zappa_settings.json](/zappa_settings.json) 파일 내 `s3_bucket`과 `remote_env` 값을 적절히 변경하세요.
+```json
+{
+  "test":
+    {
+      "s3_bucket": "your_bucket_name",
+      "remote_env": "s3://your_bucket_name/env.json",
+      "...": "...",
+    }
+}
+```
 
-`zappa_settings.json` 파일 내 `s3_bucket`과 `remote_env` 값을 위에서 사용한 `bucket_name`으로 적절히 변경한 후, 아래의 명령어를 입력하여 배포하세요.
+### Deploy
+아래의 명령어를 입력하여 배포하세요.
 ```shell
 $ zappa deploy test
 ```
