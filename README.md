@@ -11,12 +11,25 @@
 
 
 ## Requirements
-* python3.11+
-* poetry
-* AWS configuration
+* Python3.11+
+* Poetry
+* AWS Credentials
+* Slackbot OAuth Tokens
 
 
 ## How to start
+### Set up env variables
+아래의 파일을 작성하여 `s3://zappa-geulpaeng/env.json` 위치에 업로드 해주세요. `BOT_USERS`는 멘션에서 제외할 유저의 목록입니다. 해당하는 값이 없는 경우엔 `"[]"`로 입력해주세요.
+```json
+{
+  "TOKEN": "your_slackbot_token",
+  "BOT_USERS": "[\"BOTUSER_ID\"]"
+}
+```
+
+
+### Deploy
+
 ```shell
 $ git clone git@github.com:nayoung0/geulpaeng.git
 $ cd geulpaeng && poetry install
@@ -39,4 +52,5 @@ https://github.com/user-attachments/assets/2e79da7f-1106-4d00-96e8-3576e2450bfe
 
 
 ## Contact
-* 언제든지 `nayoung.tech@gmail.com` 으로 문의해주세요!
+* [Github Issues](https://github.com/nayoung0/geulpaeng/issues)으로 제보해주세요.
+* `nayoung.tech@gmail.com` 으로 문의해주세요!
