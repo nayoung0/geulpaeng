@@ -53,7 +53,7 @@ class SlackEvent:
 
 @dataclass
 class EventType:
-    challenge = "challenge"
+    challenge = "url_verification"
     app_mention = "event_callback"
     app_home_opened = "app_home_opened"
     channel_created = "channel_created"

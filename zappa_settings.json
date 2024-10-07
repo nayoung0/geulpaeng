@@ -1,5 +1,5 @@
 {
-    "dev": {
+    "test": {
         "app_function": "app.main.app",
         "aws_region": "ap-northeast-2",
         "profile_name": "default",
@@ -8,6 +8,7 @@
         "s3_bucket": "zappa-geulpaeng",
         "keep_warm": false,
         "timeout_seconds": 90,
+        "remote_env": "s3://zappa-geulpaeng/env.json",
         "exclude": [
             ".venv",
             ".idea",

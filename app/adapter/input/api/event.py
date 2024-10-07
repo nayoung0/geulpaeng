@@ -15,12 +15,14 @@ event_router = Blueprint("event", __name__, url_prefix="/event")
 @inject
 def handle_event(event_service: EventService = Provide[Container.event_service]):
     event_data = request.json
+
+    if event_data.get("type") == EventType.challenge:
+        logging.info(f"Trying to validate server: {event_data}")
+        return jsonify({"challenge": event_data.get("challenge")}), 200
+
     event = SlackEvent(**event_data)
 
-    if event.type == EventType.challenge:
-        return jsonify({"challenge": event.challenge}), 200
-
-    elif event.type == EventType.app_mention:
+    if event.type == EventType.app_mention:
         response = event_service.handle_event(event)
         return jsonify(response), 200
 
