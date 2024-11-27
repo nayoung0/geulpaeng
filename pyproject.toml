@@ -12,6 +12,7 @@ dependency-injector = "^4.42.0"
 zappa = "^0.59.0"
 slack-sdk = "^3.33.1"
 requests = "^2.32.3"
+gspread = "^6.1.4"
 
 
 [tool.poetry.group.dev.dependencies]
