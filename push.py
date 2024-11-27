@@ -1,5 +1,12 @@
+import os
+from dotenv import load_dotenv
 from enum import Enum
 from typer import Typer
+
+from app.adapter.output.slack import SlackClient
+
+
+load_dotenv()
 
 
 class Channel(str, Enum):
@@ -8,6 +15,9 @@ class Channel(str, Enum):
 
 
 class Checker:
+    def __init__(self):
+        self.slack = SlackClient(os.getenv("GEULTTO_SLACK_TOKEN"))
+
     def check(self):
         raise NotImplementedError
 
