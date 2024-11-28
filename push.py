@@ -39,7 +39,7 @@ class Channel(str, Enum):
 T = TypeVar("T")
 
 
-@dataclass
+@dataclass(frozen=True)
 class AttendanceRecord:
     timestamp: str
     user: str
@@ -49,7 +49,7 @@ class AttendanceRecord:
         return [cls(**record) for record in records]
 
 
-@dataclass
+@dataclass(frozen=True)
 class MincedGarlicAttendanceRecord(AttendanceRecord):
     date: str
 
@@ -80,11 +80,20 @@ class 다진마늘(Checker):
         self.channel = Channel.다진마늘.value
 
     def check(self):
-        sheet_records = self.get_sheet_records()
-        slack_records = self.get_slack_records()
+        sheet_records = set(
+            GarlicAttendanceRecord.from_records(self.get_sheet_records())
+        )
+        slack_records = set(
+            GarlicAttendanceRecord.from_records(self.get_slack_records())
+        )
 
-        print(len(sheet_records))
-        print(len(slack_records))
+        missing_records = list(slack_records - sheet_records)
+        sorted_missing_records = sorted(missing_records, key=lambda x: x.timestamp)
+
+        return [
+            [record.date, record.timestamp, record.user]
+            for record in sorted_missing_records
+        ]
 
     def get_slack_records(self):
         oldest = str(self.get_start_of_month().int_timestamp)
