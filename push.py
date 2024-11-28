@@ -1,8 +1,10 @@
 import os
 import gspread
 import pendulum
-from abc import abstractmethod
 from dotenv import load_dotenv
+from dataclasses import dataclass, asdict
+from typing import Any, Dict
+from abc import abstractmethod
 from enum import Enum
 from typer import Typer
 
@@ -31,6 +33,17 @@ gc = gspread.service_account_from_dict(
 class Channel(str, Enum):
     다진마늘 = "다진마늘"
     책읽어또 = "책읽어또"
+
+
+@dataclass
+class AttendanceRecord:
+    timestamp: str
+    user: str
+
+
+@dataclass
+class MincedGarlicAttendanceRecord(AttendanceRecord):
+    base_date: str
 
 
 class Checker:
