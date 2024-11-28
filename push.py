@@ -1,6 +1,7 @@
 import os
 import gspread
 import pendulum
+from abc import abstractmethod
 from dotenv import load_dotenv
 from enum import Enum
 from typer import Typer
@@ -37,8 +38,9 @@ class Checker:
         self.slack = SlackClient(os.getenv("GEULTTO_SLACK_TOKEN"))
         self.sheets = gc.open_by_key(os.getenv("SHEETS_ID"))
 
+    @abstractmethod
     def check(self):
-        raise NotImplementedError
+        pass
 
 
 class 다진마늘(Checker):
