@@ -2,6 +2,7 @@ import logging
 
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
+from typing import List, Dict, Optional
 
 
 class SlackClient:
@@ -77,3 +78,48 @@ class SlackClient:
         )
         response = self.__get_response(response)
         return response["messages"][0]["text"]
+
+    def get_conversation_history(
+        self,
+        channel_id: str,
+        *,
+        limit: int = 200,
+        oldest: Optional[str] = None,
+        latest: Optional[str] = None,
+    ) -> List[Dict]:
+        response = self.client.conversations_history(
+            channel=channel_id, limit=limit, oldest=oldest, latest=latest
+        )
+        return self.__get_response(response)
+
+    def get_all_conversation_histories(
+        self,
+        channel_id: str,
+        *,
+        limit: int = 200,
+        oldest: Optional[str] = None,
+        latest: Optional[str] = None,
+    ) -> List[Dict]:
+        all_messages = []
+        cursor: Optional[str] = None
+
+        while True:
+            response = self.client.conversations_history(
+                channel=channel_id,
+                limit=limit,
+                oldest=oldest,
+                latest=latest,
+                cursor=cursor,
+            )
+
+            all_messages.extend(response["messages"])
+
+            if not (cursor := response.get("next_cursor")):
+                break
+
+        return all_messages
+
+    def conversations_replies(self, channel_id, timestamp):
+        response = self.client.conversations_replies(channel=channel_id, ts=timestamp)
+        response = self.__get_response(response)
+        return response["messages"]
