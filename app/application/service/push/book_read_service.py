@@ -88,18 +88,19 @@ class BookReadRecordParser:
     @staticmethod
     def _extract_days(message: Dict[str, Any]) -> int:
         text = message["text"]
-        if match := re.search(r"(\d+)일차", text):
-            try:
-                return int(match.group(1).strip())
-            except ValueError:
-                return 0
+        days_pattern = re.compile(r"(\d+)일차|Day (\d+)")
+
+        if match := days_pattern.search(text):
+            if days := match.group(1) or match.group(2):
+                return int(days.strip())
+
         return 0
 
     @staticmethod
     def _extract_content(message: Dict[str, Any]) -> str:
         text = message["text"].replace("&lt;", "<").replace("&gt;", ">")
         lines = text.split("\n")
-        days_pattern = re.compile(r"(\d+)일차")
+        days_pattern = re.compile(r"(\d+)일차|Day (\d+)")
 
         for i, line in enumerate(lines):
             if days_pattern.search(line):
