@@ -16,6 +16,7 @@ gspread = "^6.1.4"
 typer = "^0.13.1"
 pendulum = "^3.0.0"
 python-dotenv = "^1.0.1"
+rich = "^13.9.4"
 
 
 [tool.poetry.group.dev.dependencies]

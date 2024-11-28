@@ -1289,4 +1289,4 @@ wheel = "*"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "9e73b66c31665e7197e892e53b2366266f8d496baeed2fa37e652b78c5abd24b"
+content-hash = "27c4bbd2418217c417e41a10b1ddf35065c62fb2086c60fb4ecb6e64cd00f7fb"
