@@ -114,7 +114,7 @@ class SlackClient:
 
             all_messages.extend(response["messages"])
 
-            if not (cursor := response.get("next_cursor")):
+            if not (cursor := response.get("response_metadata", {}).get("next_cursor")):
                 break
 
         return all_messages
