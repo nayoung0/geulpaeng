@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from enum import Enum
 from typing import Any, Dict, List, Type, TypeVar
 
@@ -40,3 +40,16 @@ class BookReadRecord(AttendanceRecord):
     days: int
     content: str
     text: str
+
+    @classmethod
+    def from_records(cls: Type[T], records: List[Dict[str, Any]]) -> List[T]:
+        return [
+            cls(
+                **{
+                    k: v
+                    for k, v in record.items()
+                    if k in {f.name for f in fields(cls)}
+                }
+            )
+            for record in records
+        ]
