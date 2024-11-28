@@ -10,7 +10,8 @@ from app.domain.model.push import Channel, MincedGarlicAttendanceRecord
 class 다진마늘(Checker):
     def __init__(self):
         super().__init__()
-        self.channel = Channel.다진마늘.value
+        self.sheet_title = Channel.다진마늘.value
+        self.slack_channel_id = os.getenv("GARLIC_CHANNEL_ID")
 
     def check(self):
         self.sheet.append_rows(self.get_missing_records())
@@ -55,7 +56,7 @@ class 다진마늘(Checker):
         latest = str(self.get_end_of_month().int_timestamp)
 
         messages = self.slack.get_all_conversation_histories(
-            os.getenv("GARLIC_CHANNEL_ID"), oldest=oldest, latest=latest
+            self.slack_channel_id, oldest=oldest, latest=latest
         )
 
         if not messages:

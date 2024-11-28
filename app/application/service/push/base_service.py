@@ -40,11 +40,11 @@ class Checker:
     def check(self):
         pass
 
-    @cached_property
+    @property
     def sheet(self):
-        if not hasattr(self, "channel") or self.channel is None:
-            raise ValueError("channel is not set")
-        return self.sheets.worksheet(self.channel)
+        if not hasattr(self, "sheet_title") or self.sheet_title is None:
+            raise ValueError("sheet_title is not set")
+        return self.sheets.worksheet(self.sheet_title)
 
     def get_sheet_records(self):
         return self.sheet.get_all_records()

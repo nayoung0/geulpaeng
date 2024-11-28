@@ -10,7 +10,8 @@ from app.domain.model.push import BookReadRecord, Channel
 class 책읽어또(Checker):
     def __init__(self):
         super().__init__()
-        self.channel = Channel.책읽어또.value
+        self.sheet_title = Channel.책읽어또.value
+        self.slack_channel_id = os.getenv("BOOK_READ_CHANNEL_ID")
 
     def check(self):
         self.sheet.append_rows(self.get_missing_records())
@@ -35,9 +36,7 @@ class 책읽어또(Checker):
         ]
 
     def get_slack_records(self):
-        messages = self.slack.get_all_conversation_histories(
-            os.getenv("BOOK_READ_CHANNEL_ID"),
-        )
+        messages = self.slack.get_all_conversation_histories(self.slack_channel_id)
 
         valid_messages = [
             message
