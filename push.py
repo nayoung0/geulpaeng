@@ -2,8 +2,10 @@ import os
 import re
 import gspread
 import pendulum
+
 from dotenv import load_dotenv
 from dataclasses import dataclass
+from functools import cached_property
 from typing import Any, Dict, List, Type, TypeVar
 from abc import abstractmethod
 from enum import Enum
@@ -56,22 +58,26 @@ class MincedGarlicAttendanceRecord(AttendanceRecord):
 
 class Checker:
     def __init__(self):
+        if not os.getenv("SHEETS_ID"):
+            raise ValueError("SHEETS_ID is not set")
+        if not os.getenv("GEULTTO_SLACK_TOKEN"):
+            raise ValueError("GEULTTO_SLACK_TOKEN is not set")
+
         self.slack = SlackClient(os.getenv("GEULTTO_SLACK_TOKEN"))
+        self.sheets = gc.open_by_key(os.getenv("SHEETS_ID"))
 
     @abstractmethod
     def check(self):
         pass
 
-    def get_sheet_records(self):
-        if not os.getenv("SHEETS_ID"):
-            raise ValueError("SHEETS_ID is not set")
-
-        if not self.channel:
+    @cached_property
+    def sheet(self):
+        if not hasattr(self, "channel") or self.channel is None:
             raise ValueError("channel is not set")
+        return self.sheets.worksheet(self.channel)
 
-        sheets = gc.open_by_key(os.getenv("SHEETS_ID"))
-        sheet = sheets.worksheet(self.channel)
-        return sheet.get_all_records()
+    def get_sheet_records(self):
+        return self.sheet.get_all_records()
 
 
 class 다진마늘(Checker):
