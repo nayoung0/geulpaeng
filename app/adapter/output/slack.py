@@ -123,3 +123,13 @@ class SlackClient:
         response = self.client.conversations_replies(channel=channel_id, ts=timestamp)
         response = self.__get_response(response)
         return response["messages"]
+
+    def get_conversation_members(self, channel_id):
+        response = self.client.conversations_members(channel=channel_id, limit=1000)
+        response = self.__get_response(response)
+        return response["members"]
+
+    def get_user_name(self, user_id):
+        response = self.client.users_info(user=user_id)
+        response = self.__get_response(response)
+        return response["user"]["real_name"]

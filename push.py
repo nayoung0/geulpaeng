@@ -16,6 +16,7 @@ def check(channel: Channel):
         case Channel.책읽어또:
             checker = 책읽어또()
 
+    checker.update_members()
     checker.check()
 
 

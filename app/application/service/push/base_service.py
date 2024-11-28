@@ -48,3 +48,21 @@ class Checker:
 
     def get_sheet_records(self):
         return self.sheet.get_all_records()
+
+    def update_members(self):
+        if not hasattr(self, "slack_channel_id") or self.slack_channel_id is None:
+            raise ValueError("slack_channel_id is not set")
+
+        sheet = self.sheets.worksheet("참여자")
+
+        sheet_records = {record["user"] for record in sheet.get_all_records()}
+        slack_records = set(self.slack.get_conversation_members(self.slack_channel_id))
+
+        missing_records = slack_records - sheet_records
+
+        rows_to_append = [
+            [user, self.slack.get_user_name(user)] for user in missing_records
+        ]
+
+        if rows_to_append:
+            sheet.append_rows(rows_to_append)
