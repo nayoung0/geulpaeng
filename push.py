@@ -1,4 +1,5 @@
 import os
+import re
 import gspread
 import pendulum
 from dotenv import load_dotenv
@@ -50,7 +51,7 @@ class AttendanceRecord:
 
 @dataclass
 class MincedGarlicAttendanceRecord(AttendanceRecord):
-    base_date: str
+    date: str
 
 
 class Checker:
@@ -80,7 +81,58 @@ class 다진마늘(Checker):
 
     def check(self):
         sheet_records = self.get_sheet_records()
-        print(sheet_records)
+        slack_records = self.get_slack_records()
+
+        print(len(sheet_records))
+        print(len(slack_records))
+
+    def get_slack_records(self):
+        oldest = str(self.get_start_of_month().int_timestamp)
+        latest = str(self.get_end_of_month().int_timestamp)
+
+        messages = self.slack.get_all_conversation_histories(
+            os.getenv("GARLIC_CHANNEL_ID"), oldest=oldest, latest=latest
+        )
+
+        if not messages:
+            raise ValueError("No messages found")
+
+        bot_message_timestamps = [
+            message["thread_ts"]
+            for message in messages
+            if message["user"] == "USLACKBOT" and message.get("thread_ts")
+        ]
+
+        keyword_pattern = re.compile(r"마늘|출근")
+        time_pattern = re.compile(r"(?:0?[0-9]|1[0-9]|2[0-3]):(?:[0-5][0-9])")
+
+        messages = [
+            message
+            for timestamp in bot_message_timestamps
+            for message in self.slack.conversations_replies(
+                os.getenv("GARLIC_CHANNEL_ID"), timestamp
+            )
+            if message["type"] == "message"
+            and message["user"] != "USLACKBOT"
+            and keyword_pattern.search(message["text"])
+            and time_pattern.search(message["text"])
+        ]
+
+        sorted_messages = sorted(messages, key=lambda x: x["ts"])
+
+        return [
+            {
+                "date": pendulum.from_timestamp(float(message["thread_ts"]))
+                .in_timezone("Asia/Seoul")
+                .start_of("day")
+                .format("MM/DD"),
+                "timestamp": pendulum.from_timestamp(float(message["ts"]))
+                .in_timezone("Asia/Seoul")
+                .format("YYYY-MM-DD HH:mm:ss"),
+                "user": message["user"],
+            }
+            for message in sorted_messages
+        ]
 
     def get_start_of_month(self, now=None):
         _now = now or pendulum.now("Asia/Seoul")
