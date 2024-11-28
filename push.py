@@ -36,20 +36,31 @@ class Channel(str, Enum):
 class Checker:
     def __init__(self):
         self.slack = SlackClient(os.getenv("GEULTTO_SLACK_TOKEN"))
-        self.sheets = gc.open_by_key(os.getenv("SHEETS_ID"))
 
     @abstractmethod
     def check(self):
         pass
 
+    def get_sheet_records(self):
+        if not os.getenv("SHEETS_ID"):
+            raise ValueError("SHEETS_ID is not set")
+
+        if not self.channel:
+            raise ValueError("channel is not set")
+
+        sheets = gc.open_by_key(os.getenv("SHEETS_ID"))
+        sheet = sheets.worksheet(self.channel)
+        return sheet.get_all_records()
+
 
 class 다진마늘(Checker):
-    def check(self):
-        sheet = self.sheets.worksheet(Channel.다진마늘)
-        records = sheet.get_all_records()
+    def __init__(self):
+        super().__init__()
+        self.channel = Channel.다진마늘.value
 
-        print(records)
-        pass
+    def check(self):
+        sheet_records = self.get_sheet_records()
+        print(sheet_records)
 
     def get_start_of_month(self, now=None):
         _now = now or pendulum.now("Asia/Seoul")
@@ -61,6 +72,10 @@ class 다진마늘(Checker):
 
 
 class 책읽어또(Checker):
+    def __init__(self):
+        super().__init__()
+        self.channel = Channel.책읽어또.value
+
     def check(self):
         pass
 
