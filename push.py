@@ -86,6 +86,9 @@ class 다진마늘(Checker):
         self.channel = Channel.다진마늘.value
 
     def check(self):
+        self.sheet.append_rows(self.get_missing_records())
+
+    def get_missing_records(self):
         sheet_records = set(
             GarlicAttendanceRecord.from_records(self.get_sheet_records())
         )
