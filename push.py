@@ -2,8 +2,8 @@ import os
 import gspread
 import pendulum
 from dotenv import load_dotenv
-from dataclasses import dataclass, asdict
-from typing import Any, Dict
+from dataclasses import dataclass
+from typing import Any, Dict, List, Type, TypeVar
 from abc import abstractmethod
 from enum import Enum
 from typer import Typer
@@ -35,10 +35,17 @@ class Channel(str, Enum):
     책읽어또 = "책읽어또"
 
 
+T = TypeVar("T")
+
+
 @dataclass
 class AttendanceRecord:
     timestamp: str
     user: str
+
+    @classmethod
+    def from_records(cls: Type[T], records: List[Dict[str, Any]]) -> List[T]:
+        return [cls(**record) for record in records]
 
 
 @dataclass
