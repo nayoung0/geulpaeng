@@ -74,7 +74,7 @@ class 다진마늘(Checker):
         return [
             message
             for timestamp in bot_message_timestamps
-            for message in self.slack.conversations_replies(
+            for message in self.slack.get_conversations_replies(
                 os.getenv("GARLIC_CHANNEL_ID"), timestamp
             )
             if message["type"] == "message"

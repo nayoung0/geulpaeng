@@ -119,7 +119,7 @@ class SlackClient:
 
         return all_messages
 
-    def conversations_replies(self, channel_id, timestamp):
+    def get_conversations_replies(self, channel_id, timestamp):
         response = self.client.conversations_replies(channel=channel_id, ts=timestamp)
         response = self.__get_response(response)
         return response["messages"]
