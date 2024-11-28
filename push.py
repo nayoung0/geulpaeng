@@ -105,37 +105,8 @@ class 다진마늘(Checker):
         ]
 
     def get_slack_records(self):
-        oldest = str(self.get_start_of_month().int_timestamp)
-        latest = str(self.get_end_of_month().int_timestamp)
-
-        messages = self.slack.get_all_conversation_histories(
-            os.getenv("GARLIC_CHANNEL_ID"), oldest=oldest, latest=latest
-        )
-
-        if not messages:
-            raise ValueError("No messages found")
-
-        bot_message_timestamps = [
-            message["thread_ts"]
-            for message in messages
-            if message["user"] == "USLACKBOT" and message.get("thread_ts")
-        ]
-
-        keyword_pattern = re.compile(r"마늘|출근")
-        time_pattern = re.compile(r"(?:0?[0-9]|1[0-9]|2[0-3]):(?:[0-5][0-9])")
-
-        messages = [
-            message
-            for timestamp in bot_message_timestamps
-            for message in self.slack.conversations_replies(
-                os.getenv("GARLIC_CHANNEL_ID"), timestamp
-            )
-            if message["type"] == "message"
-            and message["user"] != "USLACKBOT"
-            and keyword_pattern.search(message["text"])
-            and time_pattern.search(message["text"])
-        ]
-
+        bot_message_timestamps = self.get_bot_message_timestamps()
+        messages = self.find_attendance_messages(bot_message_timestamps)
         sorted_messages = sorted(messages, key=lambda x: x["ts"])
 
         return [
@@ -150,6 +121,39 @@ class 다진마늘(Checker):
                 "user": message["user"],
             }
             for message in sorted_messages
+        ]
+
+    def get_bot_message_timestamps(self):
+        oldest = str(self.get_start_of_month().int_timestamp)
+        latest = str(self.get_end_of_month().int_timestamp)
+
+        messages = self.slack.get_all_conversation_histories(
+            os.getenv("GARLIC_CHANNEL_ID"), oldest=oldest, latest=latest
+        )
+
+        if not messages:
+            raise ValueError("No messages found")
+
+        return [
+            message["thread_ts"]
+            for message in messages
+            if message["user"] == "USLACKBOT" and message.get("thread_ts")
+        ]
+
+    def find_attendance_messages(self, bot_message_timestamps: List[str]):
+        keyword_pattern = re.compile(r"마늘|출근")
+        time_pattern = re.compile(r"(?:0?[0-9]|1[0-9]|2[0-3]):(?:[0-5][0-9])")
+
+        return [
+            message
+            for timestamp in bot_message_timestamps
+            for message in self.slack.conversations_replies(
+                os.getenv("GARLIC_CHANNEL_ID"), timestamp
+            )
+            if message["type"] == "message"
+            and message["user"] != "USLACKBOT"
+            and keyword_pattern.search(message["text"])
+            and time_pattern.search(message["text"])
         ]
 
     def get_start_of_month(self, now=None):
