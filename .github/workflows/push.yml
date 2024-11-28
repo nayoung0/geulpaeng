@@ -1,0 +1,47 @@
+name: Push
+
+on:
+  schedule:
+    - cron: "0 20 * * *" # UTC 20:00 = KST 05:00
+  workflow_dispatch:
+
+jobs:
+  check-attendance:
+    runs-on: ubuntu-latest
+
+    env:
+      SHEETS_ID: ${{ secrets.SHEETS_ID }}
+      GEULTTO_SLACK_TOKEN: ${{ secrets.GEULTTO_SLACK_TOKEN }}
+      BOOK_READ_CHANNEL_ID: ${{ secrets.BOOK_READ_CHANNEL_ID }}
+      GARLIC_CHANNEL_ID: ${{ secrets.GARLIC_CHANNEL_ID }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        id: setup-python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+          cache: "poetry"
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.7.1
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root
+
+      - name: Run attendance checks
+        run: |
+          echo "::group::Book Read Check"
+          poetry run python push.py 책읽어또
+          echo "::endgroup::"
+
+          echo "::group::Garlic Check"
+          poetry run python push.py 다진마늘
+          echo "::endgroup::"
