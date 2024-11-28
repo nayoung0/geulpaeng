@@ -1,5 +1,6 @@
 import os
 import gspread
+import pendulum
 from dotenv import load_dotenv
 from enum import Enum
 from typer import Typer
@@ -47,6 +48,14 @@ class 다진마늘(Checker):
 
         print(records)
         pass
+
+    def get_start_of_month(self, now=None):
+        _now = now or pendulum.now("Asia/Seoul")
+        return _now.start_of("month")
+
+    def get_end_of_month(self, now=None):
+        _now = now or pendulum.now("Asia/Seoul")
+        return _now.end_of("month")
 
 
 class 책읽어또(Checker):
