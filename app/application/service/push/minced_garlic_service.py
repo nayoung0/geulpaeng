@@ -11,7 +11,7 @@ class 다진마늘(Checker):
     def __init__(self):
         super().__init__()
         self.sheet_title = Channel.다진마늘.value
-        self.slack_channel_id = os.getenv("GARLIC_CHANNEL_ID")
+        self.slack_channel_id = os.getenv("MINCED_GARLIC_CHANNEL_ID")
 
     def check(self):
         self.sheet.append_rows(self.get_missing_records())
@@ -76,7 +76,7 @@ class 다진마늘(Checker):
             message
             for timestamp in bot_message_timestamps
             for message in self.slack.get_conversations_replies(
-                os.getenv("GARLIC_CHANNEL_ID"), timestamp
+                os.getenv("MINCED_GARLIC_CHANNEL_ID"), timestamp
             )
             if message["type"] == "message"
             and message["user"] != "USLACKBOT"
