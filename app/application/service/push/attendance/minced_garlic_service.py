@@ -3,11 +3,11 @@ import re
 import pendulum
 from typing import List
 
-from app.application.service.push.base_service import Checker
+from app.application.service.push.attendance.attendance_service import AttendanceService
 from app.domain.model.push import Channel, MincedGarlicAttendanceRecord
 
 
-class 다진마늘(Checker):
+class 다진마늘(AttendanceService):
     def __init__(self):
         super().__init__()
         self.sheet_title = Channel.다진마늘.value

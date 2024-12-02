@@ -1,7 +1,6 @@
 import os
 import gspread
 from abc import abstractmethod
-from functools import cached_property
 from dotenv import load_dotenv
 
 from app.adapter.output.slack import SlackClient
@@ -26,7 +25,7 @@ gc = gspread.service_account_from_dict(
 )
 
 
-class Checker:
+class AttendanceService:
     def __init__(self):
         if not os.getenv("SHEETS_ID"):
             raise ValueError("SHEETS_ID is not set")

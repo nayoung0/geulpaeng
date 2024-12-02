@@ -3,11 +3,11 @@ import re
 from typing import Any, Dict
 from pendulum import from_timestamp
 
-from app.application.service.push.base_service import Checker
+from app.application.service.push.attendance.attendance_service import AttendanceService
 from app.domain.model.push import BookReadRecord, Channel
 
 
-class 책읽어또(Checker):
+class 책읽어또(AttendanceService):
     def __init__(self):
         super().__init__()
         self.sheet_title = Channel.책읽어또.value
