@@ -13,29 +13,12 @@ jobs:
       contents: "read"
       id-token: "write"
 
-    env:
-      SHEETS_ID: ${{ secrets.SHEETS_ID }}
-      GEULTTO_SLACK_TOKEN: ${{ secrets.GEULTTO_SLACK_TOKEN }}
-      PROJECT_ID: ${{ secrets.PROJECT_ID }}
-      PRIVATE_KEY_ID: ${{ secrets.PRIVATE_KEY_ID }}
-      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-      CLIENT_EMAIL: ${{ secrets.CLIENT_EMAIL }}
-      CLIENT_ID: ${{ secrets.CLIENT_ID }}
-      CLIENT_X509_CERT_URL: ${{ secrets.CLIENT_X509_CERT_URL }}
-      MINCED_GARLIC_CHANNEL_ID: ${{ vars.MINCED_GARLIC_CHANNEL_ID }}
-      BOOK_READ_CHANNEL_ID: ${{ vars.BOOK_READ_CHANNEL_ID }}
-
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v4
         with:
           python-version: "3.12"
-
-      - uses: google-github-actions/auth@v2
-        with:
-          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.SERVICE_ACCOUNT }}
 
       - name: Install Poetry
         run: |
@@ -54,3 +37,14 @@ jobs:
           echo "::group::Garlic Check"
           poetry run python push.py 다진마늘
           echo "::endgroup::"
+        env:
+          SHEETS_ID: ${{ secrets.SHEETS_ID }}
+          GEULTTO_SLACK_TOKEN: ${{ secrets.GEULTTO_SLACK_TOKEN }}
+          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          PRIVATE_KEY_ID: ${{ secrets.PRIVATE_KEY_ID }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          CLIENT_EMAIL: ${{ secrets.CLIENT_EMAIL }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_X509_CERT_URL: ${{ secrets.CLIENT_X509_CERT_URL }}
+          MINCED_GARLIC_CHANNEL_ID: ${{ vars.MINCED_GARLIC_CHANNEL_ID }}
+          BOOK_READ_CHANNEL_ID: ${{ vars.BOOK_READ_CHANNEL_ID }}
