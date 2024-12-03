@@ -4,7 +4,7 @@ from datetime import datetime
 
 from app.application.service.push.attendance.attendance_service import AttendanceService
 from app.domain.model.push import Channel, MincedGarlicAttendanceRecord
-from app.domain.util.datetime_helper import DatetimeHelper
+from app.domain.util.datetime_helper import KST, DatetimeHelper
 
 
 class 다진마늘(AttendanceService):
@@ -47,7 +47,9 @@ class 다진마늘(AttendanceService):
         ]
 
     def get_bot_message_timestamps(self) -> list[str]:
-        oldest = str(int(self.get_start_of_month().timestamp()))
+        november_first = datetime(year=2024, month=11, day=1, tzinfo=KST)
+
+        oldest = str(int(self.get_start_of_month(november_first).timestamp()))
         latest = str(int(self.get_end_of_month().timestamp()))
 
         messages = self.slack.get_all_conversation_histories(
@@ -77,8 +79,10 @@ class 다진마늘(AttendanceService):
             )
             if message["type"] == "message"
             and message["user"] != "USLACKBOT"
-            and keyword_pattern.search(message["text"])
-            and time_pattern.search(message["text"])
+            and (
+                keyword_pattern.search(message["text"])
+                or time_pattern.search(message["text"])
+            )
         ]
 
     def get_start_of_month(self, now: None | datetime = None) -> datetime:
