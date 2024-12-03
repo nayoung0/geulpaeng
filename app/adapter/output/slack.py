@@ -2,7 +2,6 @@ import logging
 
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
-from typing import List, Dict, Optional
 
 
 class SlackClient:
@@ -84,9 +83,9 @@ class SlackClient:
         channel_id: str,
         *,
         limit: int = 200,
-        oldest: Optional[str] = None,
-        latest: Optional[str] = None,
-    ) -> List[Dict]:
+        oldest: None | str = None,
+        latest: None | str = None,
+    ) -> list[dict]:
         response = self.client.conversations_history(
             channel=channel_id, limit=limit, oldest=oldest, latest=latest
         )
@@ -97,11 +96,11 @@ class SlackClient:
         channel_id: str,
         *,
         limit: int = 200,
-        oldest: Optional[str] = None,
-        latest: Optional[str] = None,
-    ) -> List[Dict]:
+        oldest: None | str = None,
+        latest: None | str = None,
+    ) -> list[dict]:
         all_messages = []
-        cursor: Optional[str] = None
+        cursor: None | str = None
 
         while True:
             response = self.client.conversations_history(

@@ -1,7 +1,6 @@
 import os
 import re
 import pendulum
-from typing import List
 
 from app.application.service.push.attendance.attendance_service import AttendanceService
 from app.domain.model.push import Channel, MincedGarlicAttendanceRecord
@@ -68,7 +67,7 @@ class 다진마늘(AttendanceService):
             if message["user"] == "USLACKBOT" and message.get("thread_ts")
         ]
 
-    def find_attendance_messages(self, bot_message_timestamps: List[str]):
+    def find_attendance_messages(self, bot_message_timestamps: list[str]):
         keyword_pattern = re.compile(r"마늘|출근")
         time_pattern = re.compile(r"(?:0?[0-9]|1[0-9]|2[0-3]):(?:[0-5][0-9])")
 

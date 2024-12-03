@@ -1,6 +1,6 @@
 from dataclasses import dataclass, fields
 from enum import Enum
-from typing import Any, Dict, List, Type, TypeVar
+from typing import Any, Type, TypeVar
 
 
 class Channel(str, Enum):
@@ -25,7 +25,7 @@ class AttendanceRecord:
         return hash((self.timestamp, self.user))
 
     @classmethod
-    def from_records(cls: Type[T], records: List[Dict[str, Any]]) -> List[T]:
+    def from_records(cls: Type[T], records: list[dict[str, Any]]) -> list[T]:
         return [cls(**record) for record in records]
 
 
@@ -42,7 +42,7 @@ class BookReadRecord(AttendanceRecord):
     text: str
 
     @classmethod
-    def from_records(cls: Type[T], records: List[Dict[str, Any]]) -> List[T]:
+    def from_records(cls: Type[T], records: list[dict[str, Any]]) -> list[T]:
         return [
             cls(
                 **{

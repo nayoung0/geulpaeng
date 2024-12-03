@@ -1,6 +1,6 @@
 import os
 import re
-from typing import Any, Dict
+from typing import Any
 from pendulum import from_timestamp
 
 from app.application.service.push.attendance.attendance_service import AttendanceService
@@ -54,7 +54,7 @@ class 책읽어또(AttendanceService):
 
 class BookReadRecordParser:
     @staticmethod
-    def parse(message: Dict[str, Any]) -> Dict[str, Any]:
+    def parse(message: dict[str, Any]) -> dict[str, Any]:
         return {
             "timestamp": from_timestamp(float(message["ts"]))
             .in_timezone("Asia/Seoul")
@@ -67,7 +67,7 @@ class BookReadRecordParser:
         }
 
     @staticmethod
-    def _extract_title(message: Dict[str, Any]) -> str:
+    def _extract_title(message: dict[str, Any]) -> str:
         text = message["root"]["text"].replace("&lt;", "<").replace("&gt;", ">")
 
         # <URL|텍스트> 패턴 확인
@@ -86,7 +86,7 @@ class BookReadRecordParser:
         return ""
 
     @staticmethod
-    def _extract_days(message: Dict[str, Any]) -> int:
+    def _extract_days(message: dict[str, Any]) -> int:
         text = message["text"]
         days_pattern = re.compile(r"(\d+)일차|Day (\d+)")
 
@@ -97,19 +97,19 @@ class BookReadRecordParser:
         return 0
 
     @staticmethod
-    def _extract_content(message: Dict[str, Any]) -> str:
+    def _extract_content(message: dict[str, Any]) -> str:
         # HTML 엔티티 디코딩
         text = message["text"].replace("&lt;", "<").replace("&gt;", ">")
-        
+
         # 코드 블록 마커 제거
         text = text.replace("```", "")
-        
+
         # 인용 마커(> ) 제거
         # 1. 시작 부분의 '> ' 제거
         # 2. 줄바꿈 후의 '> ' 제거
         text = re.sub(r"^> ", "", text)  # 시작 부분
         text = re.sub(r"\n> ", "\n", text)  # 각 줄 시작 부분
-        
+
         # 일차 패턴 찾기 및 내용 추출
         lines = text.split("\n")
         days_pattern = re.compile(r"(\d+)일차|Day (\d+)")
