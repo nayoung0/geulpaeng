@@ -1,9 +1,9 @@
 import os
 import re
-import pendulum
 
 from app.application.service.push.attendance.attendance_service import AttendanceService
 from app.domain.model.push import Channel, MincedGarlicAttendanceRecord
+from app.domain.util.datetime_helper import DatetimeHelper
 
 
 class 다진마늘(AttendanceService):
@@ -33,21 +33,21 @@ class 다진마늘(AttendanceService):
 
         return [
             MincedGarlicAttendanceRecord(
-                date=pendulum.from_timestamp(float(message["thread_ts"]))
-                .in_timezone("Asia/Seoul")
-                .start_of("day")
-                .format("MM/DD"),
-                timestamp=pendulum.from_timestamp(float(message["ts"]))
-                .in_timezone("Asia/Seoul")
-                .format("YYYY-MM-DD HH:mm:ss"),
+                date=DatetimeHelper.format(
+                    DatetimeHelper.from_timestamp(float(message["thread_ts"])),
+                    "%m/%d",
+                ),
+                timestamp=DatetimeHelper.format(
+                    DatetimeHelper.from_timestamp(float(message["ts"]))
+                ),
                 user=message["user"],
             )
             for message in sorted_messages
         ]
 
     def get_bot_message_timestamps(self):
-        oldest = str(self.get_start_of_month().int_timestamp)
-        latest = str(self.get_end_of_month().int_timestamp)
+        oldest = str(int(self.get_start_of_month().timestamp()))
+        latest = str(int(self.get_end_of_month().timestamp()))
 
         messages = self.slack.get_all_conversation_histories(
             self.slack_channel_id, oldest=oldest, latest=latest
@@ -79,9 +79,9 @@ class 다진마늘(AttendanceService):
         ]
 
     def get_start_of_month(self, now=None):
-        _now = now or pendulum.now("Asia/Seoul")
-        return _now.start_of("month")
+        _now = now or DatetimeHelper.now()
+        return DatetimeHelper.start_of_month(_now)
 
     def get_end_of_month(self, now=None):
-        _now = now or pendulum.now("Asia/Seoul")
-        return _now.end_of("month")
+        _now = now or DatetimeHelper.now()
+        return DatetimeHelper.end_of_month(_now)

@@ -1,10 +1,10 @@
 import os
 import re
 from typing import Any
-from pendulum import from_timestamp
 
 from app.application.service.push.attendance.attendance_service import AttendanceService
 from app.domain.model.push import BookReadRecord, Channel
+from app.domain.util.datetime_helper import DatetimeHelper
 
 
 class 책읽어또(AttendanceService):
@@ -54,9 +54,9 @@ class 책읽어또(AttendanceService):
 
 class BookReadRecordParser:
     @staticmethod
-    def parse(message: dict[str, Any]) -> dict[str, Any]:
-        timestamp = from_timestamp(float(message["ts"]))
-        formatted_timestamp = timestamp.format("YYYY-MM-DD HH:mm:ss")
+    def parse(message: dict[str, Any]) -> BookReadRecord:
+        timestamp = DatetimeHelper.from_timestamp(float(message["ts"]))
+        formatted_timestamp = DatetimeHelper.format(timestamp)
 
         return BookReadRecord(
             timestamp=formatted_timestamp,
