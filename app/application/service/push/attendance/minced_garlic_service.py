@@ -16,19 +16,14 @@ class 다진마늘(AttendanceService):
         self.sheet.append_rows(self.get_missing_records())
 
     def get_missing_records(self):
-        sheet_records = set(
-            MincedGarlicAttendanceRecord.from_records(self.get_sheet_records())
-        )
-        slack_records = set(
-            MincedGarlicAttendanceRecord.from_records(self.get_slack_records())
-        )
+        sheet_records = self.get_sheet_records_to(MincedGarlicAttendanceRecord)
+        slack_records = self.get_slack_records()
 
-        missing_records = list(slack_records - sheet_records)
-        sorted_missing_records = sorted(missing_records, key=lambda x: x.timestamp)
+        missing_records = list(set(slack_records) - set(sheet_records))
+        sorted_records = sorted(missing_records, key=lambda x: x.timestamp)
 
         return [
-            [record.date, record.timestamp, record.user]
-            for record in sorted_missing_records
+            [record.date, record.timestamp, record.user] for record in sorted_records
         ]
 
     def get_slack_records(self):
@@ -37,16 +32,16 @@ class 다진마늘(AttendanceService):
         sorted_messages = sorted(messages, key=lambda x: x["ts"])
 
         return [
-            {
-                "date": pendulum.from_timestamp(float(message["thread_ts"]))
+            MincedGarlicAttendanceRecord(
+                date=pendulum.from_timestamp(float(message["thread_ts"]))
                 .in_timezone("Asia/Seoul")
                 .start_of("day")
                 .format("MM/DD"),
-                "timestamp": pendulum.from_timestamp(float(message["ts"]))
+                timestamp=pendulum.from_timestamp(float(message["ts"]))
                 .in_timezone("Asia/Seoul")
                 .format("YYYY-MM-DD HH:mm:ss"),
-                "user": message["user"],
-            }
+                user=message["user"],
+            )
             for message in sorted_messages
         ]
 

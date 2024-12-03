@@ -24,10 +24,6 @@ class AttendanceRecord:
     def __hash__(self) -> int:
         return hash((self.timestamp, self.user))
 
-    @classmethod
-    def from_records(cls: Type[T], records: list[dict[str, Any]]) -> list[T]:
-        return [cls(**record) for record in records]
-
 
 @dataclass(frozen=True, eq=False)
 class MincedGarlicAttendanceRecord(AttendanceRecord):
@@ -40,16 +36,3 @@ class BookReadRecord(AttendanceRecord):
     days: int
     content: str
     text: str
-
-    @classmethod
-    def from_records(cls: Type[T], records: list[dict[str, Any]]) -> list[T]:
-        return [
-            cls(
-                **{
-                    k: v
-                    for k, v in record.items()
-                    if k in {f.name for f in fields(cls)}
-                }
-            )
-            for record in records
-        ]

@@ -1,9 +1,13 @@
 import os
 import gspread
+from typing import Any, Type, TypeVar
+from dataclasses import fields
 from abc import abstractmethod
 from dotenv import load_dotenv
 
 from app.adapter.output.slack import SlackClient
+
+T = TypeVar("T")
 
 
 load_dotenv()
@@ -35,18 +39,34 @@ class AttendanceService:
         self.slack = SlackClient(os.getenv("GEULTTO_SLACK_TOKEN"))
         self.sheets = gc.open_by_key(os.getenv("SHEETS_ID"))
 
-    @abstractmethod
-    def check(self):
-        pass
-
     @property
     def sheet(self):
         if not hasattr(self, "sheet_title") or self.sheet_title is None:
             raise ValueError("sheet_title is not set")
         return self.sheets.worksheet(self.sheet_title)
 
-    def get_sheet_records(self):
-        return self.sheet.get_all_records()
+    @abstractmethod
+    def check(self):
+        pass
+
+    @classmethod
+    def convert_records_to_models(
+        cls, records: list[dict[str, Any]], model: Type[T]
+    ) -> list[T]:
+        return [
+            model(
+                **{
+                    k: v
+                    for k, v in record.items()
+                    if k in {f.name for f in fields(model)}
+                }
+            )
+            for record in records
+        ]
+
+    def get_sheet_records_to(self, model: Type[T]) -> list[T]:
+        records = self.sheet.get_all_records()
+        return self.convert_records_to_models(records, model)
 
     def update_members(self):
         if not hasattr(self, "slack_channel_id") or self.slack_channel_id is None:
