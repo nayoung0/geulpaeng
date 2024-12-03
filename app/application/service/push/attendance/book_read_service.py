@@ -1,6 +1,5 @@
 import os
 import re
-from typing import Any
 
 from app.application.service.push.attendance.attendance_service import AttendanceService
 from app.domain.model.push import BookReadRecord, Channel
@@ -8,15 +7,15 @@ from app.domain.util.datetime_helper import DatetimeHelper
 
 
 class 책읽어또(AttendanceService):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.sheet_title = Channel.책읽어또.value
         self.slack_channel_id = os.getenv("BOOK_READ_CHANNEL_ID")
 
-    def check(self):
+    def check(self) -> None:
         self.sheet.append_rows(self.get_missing_records())
 
-    def get_missing_records(self):
+    def get_missing_records(self) -> list[list[str]]:
         sheet_records = self.get_sheet_records_to(BookReadRecord)
         slack_records = self.get_slack_records()
 
@@ -35,7 +34,7 @@ class 책읽어또(AttendanceService):
             for record in sorted_records
         ]
 
-    def get_slack_records(self):
+    def get_slack_records(self) -> list[BookReadRecord]:
         messages = self.slack.get_all_conversation_histories(self.slack_channel_id)
 
         valid_messages = [
@@ -54,7 +53,7 @@ class 책읽어또(AttendanceService):
 
 class BookReadRecordParser:
     @staticmethod
-    def parse(message: dict[str, Any]) -> BookReadRecord:
+    def parse(message: dict[str, object]) -> BookReadRecord:
         timestamp = DatetimeHelper.from_timestamp(float(message["ts"]))
         formatted_timestamp = DatetimeHelper.format(timestamp)
 
@@ -68,7 +67,7 @@ class BookReadRecordParser:
         )
 
     @staticmethod
-    def _extract_title(message: dict[str, Any]) -> str:
+    def _extract_title(message: dict[str, object]) -> str:
         text = message["root"]["text"].replace("&lt;", "<").replace("&gt;", ">")
 
         # <URL|텍스트> 패턴 확인
@@ -87,7 +86,7 @@ class BookReadRecordParser:
         return ""
 
     @staticmethod
-    def _extract_days(message: dict[str, Any]) -> int:
+    def _extract_days(message: dict[str, object]) -> int:
         text = message["text"]
         days_pattern = re.compile(r"(\d+)일차|Day (\d+)")
 
@@ -98,7 +97,7 @@ class BookReadRecordParser:
         return 0
 
     @staticmethod
-    def _extract_content(message: dict[str, Any]) -> str:
+    def _extract_content(message: dict[str, object]) -> str:
         # HTML 엔티티 디코딩
         text = (
             message["text"]

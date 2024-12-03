@@ -1,5 +1,6 @@
 import os
 import re
+from datetime import datetime
 
 from app.application.service.push.attendance.attendance_service import AttendanceService
 from app.domain.model.push import Channel, MincedGarlicAttendanceRecord
@@ -7,15 +8,15 @@ from app.domain.util.datetime_helper import DatetimeHelper
 
 
 class 다진마늘(AttendanceService):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.sheet_title = Channel.다진마늘.value
         self.slack_channel_id = os.getenv("MINCED_GARLIC_CHANNEL_ID")
 
-    def check(self):
+    def check(self) -> None:
         self.sheet.append_rows(self.get_missing_records())
 
-    def get_missing_records(self):
+    def get_missing_records(self) -> list[list[str]]:
         sheet_records = self.get_sheet_records_to(MincedGarlicAttendanceRecord)
         slack_records = self.get_slack_records()
 
@@ -26,7 +27,7 @@ class 다진마늘(AttendanceService):
             [record.date, record.timestamp, record.user] for record in sorted_records
         ]
 
-    def get_slack_records(self):
+    def get_slack_records(self) -> list[MincedGarlicAttendanceRecord]:
         bot_message_timestamps = self.get_bot_message_timestamps()
         messages = self.find_attendance_messages(bot_message_timestamps)
         sorted_messages = sorted(messages, key=lambda x: x["ts"])
@@ -45,7 +46,7 @@ class 다진마늘(AttendanceService):
             for message in sorted_messages
         ]
 
-    def get_bot_message_timestamps(self):
+    def get_bot_message_timestamps(self) -> list[str]:
         oldest = str(int(self.get_start_of_month().timestamp()))
         latest = str(int(self.get_end_of_month().timestamp()))
 
@@ -62,7 +63,9 @@ class 다진마늘(AttendanceService):
             if message["user"] == "USLACKBOT" and message.get("thread_ts")
         ]
 
-    def find_attendance_messages(self, bot_message_timestamps: list[str]):
+    def find_attendance_messages(
+        self, bot_message_timestamps: list[str]
+    ) -> list[dict[str, object]]:
         keyword_pattern = re.compile(r"마늘|출근")
         time_pattern = re.compile(r"(?:0?[0-9]|1[0-9]|2[0-3]):(?:[0-5][0-9])")
 
@@ -78,10 +81,10 @@ class 다진마늘(AttendanceService):
             and time_pattern.search(message["text"])
         ]
 
-    def get_start_of_month(self, now=None):
+    def get_start_of_month(self, now: None | datetime = None) -> datetime:
         _now = now or DatetimeHelper.now()
         return DatetimeHelper.start_of_month(_now)
 
-    def get_end_of_month(self, now=None):
+    def get_end_of_month(self, now: None | datetime = None) -> datetime:
         _now = now or DatetimeHelper.now()
         return DatetimeHelper.end_of_month(_now)

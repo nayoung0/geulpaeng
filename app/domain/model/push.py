@@ -1,6 +1,6 @@
-from dataclasses import dataclass, fields
+from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Type, TypeVar
+from typing import TypeVar
 
 
 class Channel(str, Enum):
@@ -16,7 +16,7 @@ class AttendanceRecord:
     timestamp: str
     user: str
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, type(self)):
             return False
         return self.timestamp == other.timestamp and self.user == other.user
