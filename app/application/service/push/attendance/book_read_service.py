@@ -100,7 +100,12 @@ class BookReadRecordParser:
     @staticmethod
     def _extract_content(message: dict[str, Any]) -> str:
         # HTML 엔티티 디코딩
-        text = message["text"].replace("&lt;", "<").replace("&gt;", ">")
+        text = (
+            message["text"]
+            .replace("&lt;", "<")
+            .replace("&gt;", ">")
+            .replace("&amp;", "&")
+        )
 
         # 코드 블록 마커 제거
         text = text.replace("```", "")
