@@ -24,3 +24,6 @@ __pycache__
 *.zip
 
 app/slack/**
+
+.direnv
+.env
