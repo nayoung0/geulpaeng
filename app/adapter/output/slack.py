@@ -1,19 +1,25 @@
 import logging
 
-from slack_sdk import WebClient
+from typing import TypeVar
+from slack_sdk.web.client import WebClient
 from slack_sdk.errors import SlackApiError
 
 
+T = TypeVar("T")
+
+
 class SlackClient:
-    def __init__(self, token):
+    def __init__(self, token: str) -> None:
         self.client = WebClient(token)
 
-    def __get_response(self, response):
+    def __get_response(self, response: T) -> T:
         if not response["ok"]:
             raise SlackApiError(response["error"])
         return response
 
-    def get_member_id_by_channel(self, channel_id, cursor=None):
+    def get_member_id_by_channel(
+        self, channel_id: str, cursor: None | str = None
+    ) -> list[str]:
         response = self.client.conversations_members(channel=channel_id, cursor=cursor)
         response = self.__get_response(response)
 
@@ -26,7 +32,7 @@ class SlackClient:
             member_id += self.get_member_id_by_channel(channel_id, next_cursor)
         return member_id
 
-    def get_reaction_members(self, channel_id, timestamp):
+    def get_reaction_members(self, channel_id: str, timestamp: str) -> set[str]:
         response = self.client.reactions_get(channel=channel_id, timestamp=timestamp)
         response = self.__get_response(response)
 
@@ -42,7 +48,9 @@ class SlackClient:
             user_id.update(reaction["users"])
         return user_id
 
-    def post_remind_message(self, channel_id, timestamp, users):
+    def post_remind_message(
+        self, channel_id: str, timestamp: str, users: list[str]
+    ) -> None:
         user_list = ""
         for user in users:
             user_list += "<@" + user + "> "
@@ -55,7 +63,9 @@ class SlackClient:
         response = self.__get_response(response)
         return
 
-    def post_message(self, channel_id, user, timestamp, message):
+    def post_message(
+        self, channel_id: str, user: str, timestamp: str, message: str
+    ) -> None:
         response = self.client.chat_postMessage(
             channel=channel_id,
             text=message,
@@ -66,14 +76,69 @@ class SlackClient:
         response = self.__get_response(response)
         return
 
-    def is_bot_user(self, user):
+    def is_bot_user(self, user: str) -> bool:
         response = self.client.users_info(user=user)
         response = self.__get_response(response)
         return response["user"].get("is_bot")
 
-    def get_message_info(self, channel_id, timestamp):
+    def get_message_info(self, channel_id: str, timestamp: str) -> str:
         response = self.client.conversations_history(
             channel=channel_id, oldest=timestamp, limit=1, inclusive=True
         )
         response = self.__get_response(response)
         return response["messages"][0]["text"]
+
+    def get_conversation_history(
+        self,
+        channel_id: str,
+        *,
+        limit: int = 200,
+        oldest: None | str = None,
+        latest: None | str = None,
+    ) -> list[dict]:
+        response = self.client.conversations_history(
+            channel=channel_id, limit=limit, oldest=oldest, latest=latest
+        )
+        return self.__get_response(response)
+
+    def get_all_conversation_histories(
+        self,
+        channel_id: str,
+        *,
+        limit: int = 200,
+        oldest: None | str = None,
+        latest: None | str = None,
+    ) -> list[dict]:
+        all_messages = []
+        cursor: None | str = None
+
+        while True:
+            response = self.client.conversations_history(
+                channel=channel_id,
+                limit=limit,
+                oldest=oldest,
+                latest=latest,
+                cursor=cursor,
+            )
+
+            all_messages.extend(response["messages"])
+
+            if not (cursor := response.get("response_metadata", {}).get("next_cursor")):
+                break
+
+        return all_messages
+
+    def get_conversations_replies(self, channel_id: str, timestamp: str) -> list[dict]:
+        response = self.client.conversations_replies(channel=channel_id, ts=timestamp)
+        response = self.__get_response(response)
+        return response["messages"]
+
+    def get_conversation_members(self, channel_id: str) -> list[str]:
+        response = self.client.conversations_members(channel=channel_id, limit=1000)
+        response = self.__get_response(response)
+        return response["members"]
+
+    def get_user_name(self, user_id: str) -> str:
+        response = self.client.users_info(user=user_id)
+        response = self.__get_response(response)
+        return response["user"]["real_name"]

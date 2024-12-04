@@ -1,10 +1,9 @@
 from dataclasses import dataclass, field
-from typing import List, Optional, Dict
 
 
 @dataclass
 class Authorization:
-    enterprise_id: Optional[str]
+    enterprise_id: None | str
     team_id: str
     user_id: str
     is_bot: bool
@@ -15,15 +14,15 @@ class Authorization:
 class Event:
     client_msg_id: str
     type: str
-    text: Optional[str]
+    text: None | str
     user: str
     ts: str
     team: str
-    thread_ts: Optional[str]
-    parent_user_id: Optional[str]
+    thread_ts: None | str
+    parent_user_id: None | str
     channel: str
     event_ts: str
-    blocks: Optional[List[Dict]] = field(default_factory=list)
+    blocks: None | list[dict] = field(default_factory=list)
 
 
 @dataclass
@@ -35,10 +34,10 @@ class SlackEvent:
     type: str
     event_id: str
     event_time: int
-    authorizations: List[Authorization]
+    authorizations: list[Authorization]
     is_ext_shared_channel: bool
     event_context: str
-    challenge: Optional[str] = None
+    challenge: None | str = None
 
     def is_url_verification(self) -> bool:
         return self.type == "url_verification"
