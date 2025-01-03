@@ -37,6 +37,10 @@ jobs:
           echo "::group::Garlic Check"
           poetry run python push.py 다진마늘
           echo "::endgroup::"
+
+          echo "::group::Rising Check"
+          poetry run python push.py 일어났또
+          echo "::endgroup::"
         env:
           SHEETS_ID: ${{ secrets.SHEETS_ID }}
           GEULTTO_SLACK_TOKEN: ${{ secrets.GEULTTO_SLACK_TOKEN }}
