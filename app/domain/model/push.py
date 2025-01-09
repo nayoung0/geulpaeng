@@ -6,6 +6,7 @@ from typing import TypeVar
 class Channel(str, Enum):
     다진마늘 = "다진마늘"
     책읽어또 = "책읽어또"
+    일어났또 = "일어났또"
 
 
 T = TypeVar("T")
@@ -36,3 +37,8 @@ class BookReadRecord(AttendanceRecord):
     days: int
     content: str
     text: str
+
+
+@dataclass(frozen=True, eq=False)
+class RisingAttendanceRecord(AttendanceRecord):
+    date: str
