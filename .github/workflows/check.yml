@@ -1,0 +1,58 @@
+name: 4채널 체크
+
+on:
+  schedule:
+    - cron: "0 18 * * *" # UTC 18:00 = KST 03:00 (일어났또)
+    - cron: "0 19 * * *" # UTC 19:00 = KST 04:00 (책읽어또)
+    - cron: "0 20 * * *" # UTC 20:00 = KST 05:00 (다진마늘)
+  workflow_dispatch:
+
+env:
+  SHEETS_ID: ${{ secrets.SHEETS_ID }}
+  GEULTTO_SLACK_TOKEN: ${{ secrets.GEULTTO_SLACK_TOKEN }}
+  PROJECT_ID: ${{ secrets.PROJECT_ID }}
+  PRIVATE_KEY_ID: ${{ secrets.PRIVATE_KEY_ID }}
+  PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+  CLIENT_EMAIL: ${{ secrets.CLIENT_EMAIL }}
+  CLIENT_ID: ${{ secrets.CLIENT_ID }}
+  CLIENT_X509_CERT_URL: ${{ secrets.CLIENT_X509_CERT_URL }}
+  MINCED_GARLIC_CHANNEL_ID: ${{ vars.MINCED_GARLIC_CHANNEL_ID }}
+  BOOK_READ_CHANNEL_ID: ${{ vars.BOOK_READ_CHANNEL_ID }}
+  RISING_CHANNEL_ID: ${{ vars.RISING_CHANNEL_ID }}
+
+jobs:
+  rising-check:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 18 * * *'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-poetry
+      - run: |
+          poetry run python push.py 일어났또
+
+  book-read-check:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 19 * * *'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-poetry
+      - run: |
+          poetry run python push.py 책읽어또
+
+  minced-garlic-check:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 20 * * *'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-poetry
+      - run: |
+          poetry run python push.py 다진마늘

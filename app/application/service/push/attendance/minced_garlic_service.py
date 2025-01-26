@@ -47,7 +47,7 @@ class 다진마늘(AttendanceService):
         ]
 
     def get_bot_message_timestamps(self) -> list[str]:
-        november_first = datetime(year=2024, month=11, day=1, tzinfo=KST)
+        november_first = datetime(year=2025, month=1, day=1, tzinfo=KST)
 
         oldest = str(int(self.get_start_of_month(november_first).timestamp()))
         latest = str(int(self.get_end_of_month().timestamp()))
