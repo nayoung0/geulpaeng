@@ -3,7 +3,7 @@ import re
 from datetime import datetime
 
 from app.application.service.push.attendance.attendance_service import AttendanceService
-from app.domain.model.push import Channel, MincedGarlicAttendanceRecord
+from app.domain.model.attendance import Channel, MincedGarlicAttendanceRecord
 from app.domain.util.datetime_helper import KST, DatetimeHelper
 
 

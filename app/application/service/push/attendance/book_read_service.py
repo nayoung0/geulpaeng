@@ -2,7 +2,7 @@ import os
 import re
 
 from app.application.service.push.attendance.attendance_service import AttendanceService
-from app.domain.model.push import BookReadRecord, Channel
+from app.domain.model.attendance import BookReadRecord, Channel
 from app.domain.util.datetime_helper import DatetimeHelper
 
 
