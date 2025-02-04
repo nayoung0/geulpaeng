@@ -49,11 +49,11 @@ class 커피챗:
 
         formatted_records = self.format_records(records)
 
-        for index, record in enumerate(formatted_records, 1):
-            self.send_coffee_chat_message(record, index)
+        for group_id, record in formatted_records:
+            self.send_coffee_chat_message(record, group_id)
             time.sleep(2)
 
-    def format_records(self, records: list[dict]) -> list[str]:
+    def format_records(self, records: list[dict]) -> list[tuple[int, str]]:
         groups = {}
 
         for record in records:
@@ -62,7 +62,10 @@ class 커피챗:
                 groups[group_id] = []
             groups[group_id].append(f"<@{record['id']}>")
 
-        return [", ".join(members) for _, members in sorted(groups.items())]
+        return [
+            (group_id, ", ".join(members))
+            for group_id, members in sorted(groups.items())
+        ]
 
     def get_all_user_ids(self, records: list[dict]) -> list[str]:
         user_ids = [record["id"] for record in records]
