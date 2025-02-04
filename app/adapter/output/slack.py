@@ -152,3 +152,8 @@ class SlackClient:
         response = self.client.users_info(user=user_id)
         response = self.__get_response(response)
         return response["user"]["real_name"]
+
+    def invite_users_to_channel(self, channel_id: str, user_ids: str) -> None:
+        response = self.client.conversations_invite(channel=channel_id, users=user_ids)
+        response = self.__get_response(response)
+        return response

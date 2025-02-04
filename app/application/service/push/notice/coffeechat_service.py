@@ -40,6 +40,13 @@ class 커피챗:
         sheet = self.sheets.worksheet("export")
 
         records = sheet.get_all_records()
+
+        user_ids = self.get_all_user_ids(records)
+        self.slack.invite_users_to_channel(
+            channel_id=os.getenv("SLACK_COFFEE_CHAT_CHANNEL_ID"),
+            user_ids=user_ids,
+        )
+
         formatted_records = self.format_records(records)
 
         for index, record in enumerate(formatted_records, 1):
@@ -56,6 +63,11 @@ class 커피챗:
             groups[group_id].append(f"<@{record['id']}>")
 
         return [", ".join(members) for _, members in sorted(groups.items())]
+
+    def get_all_user_ids(self, records: list[dict]) -> list[str]:
+        user_ids = [record["id"] for record in records]
+        unique_user_ids = list(set(user_ids))
+        return ",".join(unique_user_ids)
 
     def send_coffee_chat_message(self, record: str, team_number: int) -> None:
         response = self.slack.post(
