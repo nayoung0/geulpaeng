@@ -36,7 +36,7 @@ class 커피챗:
         self.slack = SlackClient(os.getenv("GEULTTO_SLACK_TOKEN"))
         self.sheets = gc.open_by_key(os.getenv("SHEETS_COFFEECHAT_ID"))
 
-    def push(self) -> None:
+    def notice(self) -> None:
         sheet = self.sheets.worksheet("export")
 
         records = sheet.get_all_records()

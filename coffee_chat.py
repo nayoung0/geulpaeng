@@ -9,7 +9,7 @@ cli = Typer()
 @cli.command()
 def notice_coffee_chat() -> None:
     service = 커피챗()
-    service.push()
+    service.notice()
 
 
 if __name__ == "__main__":
