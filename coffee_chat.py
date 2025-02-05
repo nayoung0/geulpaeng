@@ -1,6 +1,6 @@
 from typer import Typer
 
-from app.application.service.push.notice.coffeechat_service import 커피챗
+from app.application.service.push.notice.coffee_chat_service import 커피챗
 
 
 cli = Typer()
