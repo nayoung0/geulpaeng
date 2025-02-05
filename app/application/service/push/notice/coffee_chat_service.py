@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 import time
 from gspread import service_account_from_dict
@@ -89,3 +90,37 @@ class 커피챗:
                 "- 위 내용을 토대로 일정을 조율해주세요."
             ),
         )
+
+    def export_thread(self, url: str) -> None:
+        channel_id, thread_ts = self.parse_slack_url(url)
+
+        messages = self.slack.get_conversations_replies(channel_id, thread_ts)
+
+        for message in messages:
+            user = message["user"]
+            text = " ".join(message["text"].split())
+            ts = self.format_timestamp(message["ts"])
+            name = self.slack.get_user_name(user)
+
+            print(f"{ts}|{name}|{user}|{text}")
+
+        return messages
+
+    def parse_slack_url(self, url: str) -> tuple[str, str]:
+        parts = url.split("/")
+        channel_id = parts[-2]
+        timestamp = parts[-1]
+
+        thread_ts = timestamp[1:]
+        thread_ts = f"{thread_ts[:-6]}.{thread_ts[-6:]}"
+
+        return channel_id, thread_ts
+
+    def format_timestamp(self, ts: str) -> str:
+        timestamp = float(ts)
+        dt = datetime.fromtimestamp(timestamp)
+
+        am_pm = "오후" if dt.hour >= 12 else "오전"
+        hour = dt.hour if dt.hour <= 12 else dt.hour - 12
+
+        return dt.strftime(f"%Y. %m. %d {am_pm} {hour}:%M:%S")
