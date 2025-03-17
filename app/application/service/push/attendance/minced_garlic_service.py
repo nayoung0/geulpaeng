@@ -47,9 +47,17 @@ class 다진마늘(AttendanceService):
         ]
 
     def get_bot_message_timestamps(self) -> list[str]:
-        november_first = datetime(year=2025, month=1, day=1, tzinfo=KST)
+        now = DatetimeHelper.now()
 
-        oldest = str(int(self.get_start_of_month(november_first).timestamp()))
+        previous_month = now.replace(day=1)
+        if previous_month.month == 1:
+            previous_month = previous_month.replace(
+                year=previous_month.year - 1, month=12
+            )
+        else:
+            previous_month = previous_month.replace(month=previous_month.month - 1)
+
+        oldest = str(int(previous_month.timestamp()))
         latest = str(int(self.get_end_of_month().timestamp()))
 
         messages = self.slack.get_all_conversation_histories(
