@@ -63,6 +63,10 @@ class SlackClient:
         response = self.__get_response(response)
         return
 
+    def post(self, channel_id: str, message: str) -> dict:
+        response = self.client.chat_postMessage(channel=channel_id, text=message)
+        return self.__get_response(response)
+
     def post_message(
         self, channel_id: str, user: str, timestamp: str, message: str
     ) -> None:
@@ -75,6 +79,12 @@ class SlackClient:
         )
         response = self.__get_response(response)
         return
+
+    def reply(self, channel_id: str, timestamp: str, message: str) -> dict:
+        response = self.client.chat_postMessage(
+            channel=channel_id, text=message, thread_ts=timestamp
+        )
+        return self.__get_response(response)
 
     def is_bot_user(self, user: str) -> bool:
         response = self.client.users_info(user=user)
@@ -142,3 +152,8 @@ class SlackClient:
         response = self.client.users_info(user=user_id)
         response = self.__get_response(response)
         return response["user"]["real_name"]
+
+    def invite_users_to_channel(self, channel_id: str, user_ids: str) -> None:
+        response = self.client.conversations_invite(channel=channel_id, users=user_ids)
+        response = self.__get_response(response)
+        return response

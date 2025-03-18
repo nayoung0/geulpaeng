@@ -1,7 +1,7 @@
 from typer import Typer
 from typing import Type
 
-from app.domain.model.push import Channel
+from app.domain.model.attendance import Channel
 from app.application.service.push.attendance.attendance_service import AttendanceService
 from app.application.service.push.attendance.book_read_service import 책읽어또
 from app.application.service.push.attendance.minced_garlic_service import 다진마늘
